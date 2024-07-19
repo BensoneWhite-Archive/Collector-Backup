@@ -1,0 +1,3 @@
+[ADD]wind/rangeFac=1 : wind/vol=0.6/pitch=1
+[ADD]porl/rangeFac=1 : porl/vol=0.6/pitch=1
+[ADD]flap/rangeFac=1 : flap/vol=0.6/pitch=1

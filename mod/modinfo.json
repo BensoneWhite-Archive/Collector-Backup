@@ -1,0 +1,9 @@
+﻿{
+	"id": "TheCollector",
+	"name": "The Collector",
+	"version": "0.1.0",
+	"authors": "BensoneWhite/Wolfycatt(Ana)/DeathPits",
+	"description": "The Collector WIP slugcat",
+	"requirements": [ "slime-cubed.slugbase" ],
+	"requirements_names": [ "SlugBase" ]
+}

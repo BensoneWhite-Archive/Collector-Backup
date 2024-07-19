@@ -1,0 +1,47 @@
+{
+	"id": "TheCollector",
+	"name": "The Collector",
+	"description": "A long lost descendant of fancy aerial pets, you glide gracefully through a world of increasing rains. <LINE> Your pilgrimage is one to seek ancient knowledge, with just the right tools for it.",
+	"features": {
+		"color": "ac7ff6",
+		"custom_colors": 
+		[
+			{ "name": "Body", "story": "ac7ff6", "arena": ["F0F0FF","FFFF73","FF7373","1E112E"] },
+			{ "name": "Eyes", "story": "fff5a8", "arena": ["E05656","E05656","E05656","E05656"] }
+		],
+
+		"sleep_scene": "TheCollector_Sleep",
+		"select_menu_scene": "TheCollector_Slugcat",
+		"select_menu_scene_ascended": "TheCollector_Ghost",
+		"starve_scene": " ",
+		"death_scene": " ",
+		"has_dreams": false,
+		"the_mark": true,
+
+		"karma_cap": 5,
+		"guide_overseer": 5,
+		"auto_grab_batflies": true,
+		"back_spear": true,
+
+		"cycle_length_min": 4,
+		"cycle_length_max": 6,
+		"world_state": "Rivulet",
+
+		"tunnel_speed": [1.45, 1.1],
+		"climb_speed": [1.45, 1.2],
+		"walk_speed": [1.2, 1.1],
+		"crouch_stealth": [0.9, 0.7],
+		"throw_skill": [0, 1],
+		"lung_capacity": [0.9, 0.7],
+		"food_min": 7,
+		"food_max": 10,
+		"weight": [1, 0.9],
+
+		"alignments": 
+		{
+			"Scavengers": { "like": -1.5, "strength": 0.2, "locked": false }
+		},
+		
+		"diet": { "corpses": 0.5, "plants": 1, "meat": 1, }	
+	}
+}

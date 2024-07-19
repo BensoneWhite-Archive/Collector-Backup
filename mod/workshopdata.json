@@ -1,0 +1,17 @@
+{
+  "Title": "The Collector",
+  "Description": "The Collector WIP slugcat",
+  "ID": "TheCollector",
+  "Version": "0.1.0",
+  "TargetGameVersion": "v1.9.06",
+  "Requirements": "slime-cubed.slugbase",
+  "RequirementNames": "SlugBase",
+  "Authors": "BensoneWhite/Wolfycatt(Ana)/DeathPits",
+  "Visibility": "Friends-only",
+  "Tags": [
+    "Campaigns"
+  ],
+  "WorkshopID": 2980656452,
+  "UploadFilesOnly": true,
+  "UploadThumbnail": false
+}

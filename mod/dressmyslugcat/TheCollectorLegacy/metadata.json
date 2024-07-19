@@ -1,0 +1,15 @@
+{
+  "id": "TheCollector.Legacy",
+  "name": "The Collector (Legacy)",
+  "author": "Wolfycatt(Ana)"
+  "defaults": {
+	"HEAD": { "color": "#FFFFFF" },
+	"ARMS": { "color": "#FFFFFF" },
+	"BODY": { "color": "#FFFFFF" },
+	"HIPS": { "color": "#FFFFFF" },
+	"LEGS": { "color": "#FFFFFF" },
+	"FACE": { "color": "#FFFFFF" },
+	"TAIL": { "color": "#FFFFFF" },
+	"TAIL": {"Length":7,"Width":3.8,"Roundness":0.7}
+   }
+}

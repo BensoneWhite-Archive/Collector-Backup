@@ -1,0 +1,18 @@
+{
+	"id": "TheCollector_Sleep",
+	"scene_folder": "scenes/TheCollector - Sleep",
+	"images": [
+		{ "name": "Collector - Flat", "pos": [0, 110], "depth": -1.0, "flatmode": true},
+		{"name": "sleep - 5", "pos": [672, 236], "depth": 4.0},
+		{"name": "sleep - 4", "pos": [685, 138], "depth": 3.1, "shader": "Lighten"},
+		{"name": "needle", "pos": [498, -38], "depth": 3.0},
+		{"name": "sleep - 3", "pos": [740, 138], "depth": 2.2},
+		{"name": "flower", "pos": [498, -38], "depth": 2.1, "shader": "Basic"},
+		{"name": "orange", "pos": [498, -38], "depth": 2.0},
+		{"name": "Slugcat", "pos": [758, 117], "depth": 1.9},
+		{"name": "pearls", "pos": [498, -38], "depth": 1.8},
+		{"name": "sleep - 1", "pos": [498, -38], "depth": 1.7}
+		
+	],
+	"idle_depths": [1.1, 2.6]
+}
