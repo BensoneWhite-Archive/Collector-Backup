@@ -25,7 +25,7 @@
 
 		"cycle_length_min": 4,
 		"cycle_length_max": 6,
-		"world_state": "Rivulet",
+		"world_state": ["Rivulet", "Survivor" ],
 
 		"tunnel_speed": [1.45, 1.1],
 		"climb_speed": [1.45, 1.2],
@@ -42,6 +42,6 @@
 			"Scavengers": { "like": -1.5, "strength": 0.2, "locked": false }
 		},
 		
-		"diet": { "corpses": 0.5, "plants": 1, "meat": 1, }	
+		"diet": { "base": "Gourmand" }	
 	}
 }

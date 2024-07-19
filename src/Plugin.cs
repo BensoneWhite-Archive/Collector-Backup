@@ -5,9 +5,11 @@ namespace TheCollector
 {
     [BepInDependency("slime-cubed.slugbase")]
     [BepInDependency("dressmyslugcat", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("MSC", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("MoreSlugcats", BepInDependency.DependencyFlags.SoftDependency)] // theres two cause i forget which is its name. skull emoji
     [BepInPlugin("TheCollector", "The Collector", "0.1.0")]
 
-    class Plugin : BaseUnityPlugin
+    class CollectorPlugin : BaseUnityPlugin
     {
         static bool _Initialized;
         private TheCollectorOptionsMenu optionsMenuInstance;
@@ -15,12 +17,12 @@ namespace TheCollector
         public void OnEnable()
         {
             On.RainWorld.OnModsInit += RainWorld_OnModsInit;
+            // initiates collector and all submodules
         }
 
         public static readonly PlayerFeature<int> slideStamina = PlayerInt("collector/SlideStamina");
         public static readonly PlayerFeature<float> SlideRecovery = PlayerFloat("collector/SlideRecovery");
         public static readonly PlayerFeature<float> SlideSpeed = PlayerFloat("collector/SlideSpeed");
-        public static readonly PlayerFeature<bool> Collector = PlayerBool("collector/Collector");
 
         private void RainWorld_OnModsInit(On.RainWorld.orig_OnModsInit orig, RainWorld self)
         {
@@ -31,7 +33,7 @@ namespace TheCollector
                 _Initialized = true;
 
                 TCEnums.Init();
-                PorlCollar.Init();
+                PearlCollar.Init();
 
                 StatsHooks.Init();
                 FlapAbility.init();
@@ -46,8 +48,7 @@ namespace TheCollector
             catch (Exception ex)
             {
                 Debug.Log($"Remix Menu: Hook_OnModsInit options failed init error {optionsMenuInstance}{ex}");
-                Logger.LogError(ex);
-                Logger.LogMessage("WHOOPS something go wrong"); 
+                Debug.Log("COLLECTOR ERROR: " + ex);
             }
             finally
             {
@@ -84,6 +85,8 @@ namespace TheCollector
                     }
                 });
             }
+            // end dms sprite setup
         }
+        // end plugin
     }    
 }

@@ -1,14 +1,19 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace TheCollector.Extensions;
+namespace TheCollector;
 
 public static class CollarCWT
 {
-    private static readonly ConditionalWeakTable<Player, Disdain> CWT = new();
-    public static Disdain Yippee(this Player player) => CWT.GetValue(player, _ => new(player));
-    public class Disdain
+    // this code is so hard to parse. ok.
+
+    private static readonly ConditionalWeakTable<Player, PearlCollection> CWT = new();
+    // conditional weak table involving the player and the pearlcollection
+
+    public static PearlCollection Yippee(this Player player) => CWT.GetValue(player, _ => new(player));
+
+    public class PearlCollection
     {
-        public PorlCollection porlztorage;
+        public CollectedPearls pearlstorage; // changed the value to pearlstorage because it was hard to read and tripped me up ;-;
 
         public class AbstractPorls : AbstractPhysicalObject.AbstractObjectStick
         {
@@ -16,21 +21,24 @@ public static class CollarCWT
             {
                 get { return A; }
                 set { A = value; }
+                // sets player as the thing being stuck to
             }
 
             public AbstractPhysicalObject DataPearl
             {
                 get { return B; }
                 set { B = value; }
+                // sets pearl as the thing being stuck
             }
 
             public AbstractPorls(AbstractPhysicalObject player, AbstractPhysicalObject pearl)
                 : base(player, pearl)
             {
+
             }
         }
 
-        public class PorlCollection
+        public class CollectedPearls
         {
             public Player Owner;
             public Stack<DataPearl> deezNuts;
@@ -40,7 +48,7 @@ public static class CollarCWT
             private int counter;
             private bool locked;
 
-            public PorlCollection(Player owner)
+            public CollectedPearls(Player owner)
             {
                 if (deezNuts == null)
                 {
@@ -124,12 +132,11 @@ public static class CollarCWT
 
             private void CanYouUnderstandWithoutLookingThisUp(DataPearl DataUnfold, Player self, int Foot = 0)
             {
-
                 if (deezNuts.Count >= capacity)
                 {
+                    // HELP. if the pearl count is greater than or equal to the max amount of pearls allowed
                     return;
                 }
-
 
                 Owner.ReleaseGrasp(Foot);
                 DataUnfold.CollideWithObjects = false;
@@ -138,8 +145,9 @@ public static class CollarCWT
                 Owner.noPickUpOnRelease = 20;
                 Owner.room?.PlaySound(TCEnums.Sound.porl, Owner.mainBodyChunk);
                 abstractNutz.Push(new AbstractPorls(Owner.abstractPhysicalObject, DataUnfold.abstractPhysicalObject));
-                Debug.LogWarning("Moved porl from paw to strage! Storage index is now: " + deezNuts.Count);
+                Debug.LogWarning("Collector moved porl from paw to storage! Storage index is now: " + deezNuts.Count);
             }
+
             private void GoogleTranslateDidntWork(bool Cause, Player self)
             {
 
@@ -183,12 +191,13 @@ public static class CollarCWT
                     }
                 }
             }
+            // end abstractpearls
         }
 
-        public Disdain(Player player)
+        public PearlCollection(Player player)
         {
-            porlztorage = new PorlCollection(player);
+            pearlstorage = new CollectedPearls(player);
         }
     }
-
+    // end disdain
 }

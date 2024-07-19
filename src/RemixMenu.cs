@@ -43,7 +43,8 @@ namespace TheCollector
             {
                 new OpLabel(0f, 580f, "Options", true),
 
-                DamageList = new OpListBox(Damage, new Vector2(10,425), 100, new List<ListItem>{ new ListItem("1. Monk"),new ListItem("2. Survivor"),new ListItem("3. Hunter") }) { description = Translate("Select your Damage (Monk as default)") },
+                DamageList = new OpListBox(Damage, new Vector2(10,425), 100, new List<ListItem>{ new ListItem("1. Monk"),
+                    new ListItem("2. Survivor"),new ListItem("3. Hunter") }) { description = Translate("Select your Damage (Monk as default)") },
                 DamageLabel = new OpLabel(10f, 530f, Translate("Collector Damage")),
 
             };
