@@ -12,6 +12,9 @@ namespace TheCollector
     {
         public static void Init()
         {
+            On.Player.ctor += Player_ctor;
+            // initiating
+
             On.Player.Jump += Player_Jump;
             // boosts to jumps
 
@@ -26,9 +29,6 @@ namespace TheCollector
 
             On.Player.WallJump += Player_WallJump;
             // walljump tweaks
-
-            On.Player.ctor += Player_ctor;
-            // initiating collector to be collector
         }
 
         private static void Player_ctor(On.Player.orig_ctor orig, Player self, AbstractCreature abstractCreature, World world)
@@ -36,15 +36,22 @@ namespace TheCollector
             orig(self, abstractCreature, world);
             if (self.slugcatStats.name.value == "TheCollector")
             {
-                self.GetCollector().isCollector = true;
+                if (self.GetCollector().isCollector == false)
+                {
+                    self.GetCollector().NeonWantsDebugLogsUwU = false;
+                    // turn this to true for even more extra debug logs. a frankly ridiculous amount of them
+
+                    self.GetCollector().isCollector = true;
+                    // if false, no changes will be made whatsoever
+                }
             }
         }
 
         private static void Player_Jump(On.Player.orig_Jump orig, Player self)
         {
             orig(self);
-
-            if (self.GetCollector().isCollector)
+            if (self != null && self.room != null && self.bodyChunks != null &&
+                self.GetCollector().isCollector)
             {
                 float jumpboost = Mathf.Lerp(1f, 1.15f, self.Adrenaline);
                 // jumpboost ranges from 1 to 1.15 depending on adrenaline levels
@@ -52,7 +59,7 @@ namespace TheCollector
                 self.jumpBoost += 0.70f + jumpboost;
                 // standard boost is 1.7f higher than standard jumps, plus 0.15 if on shrooms
 
-                if (self.animation == Player.AnimationIndex.Flip)
+                if (self.animation != null && self.animation == Player.AnimationIndex.Flip)
                 {
                     // bodychunks[0] body, bodychunks[1] hips
                     self.bodyChunks[0].vel.y = 10f * jumpboost;
@@ -75,23 +82,20 @@ namespace TheCollector
 
         private static bool Player_CanBeSwallowed(On.Player.orig_CanBeSwallowed orig, Player self, PhysicalObject testObj)
         {
-            if (testObj != null &&
+            if (testObj != null && self != null &&
                 // preventing null errors
                 self.GetCollector().isCollector && testObj is DataPearl)
             {
                 return false;
                 // collector cannot swallow pearls and will not comprimise on this
             }
-            else
-            {
-                return orig(self, testObj);
-            }
+            return orig(self, testObj);
         }
 
         private static void Player_UpdateBodyMode(On.Player.orig_UpdateBodyMode orig, Player self)
         {
             orig(self);
-            if (self.bodyMode != null &&
+            if (self.bodyMode != null && self != null && self.room != null &&
                 self.GetCollector().isCollector)
             {
                 // more bodymode updates go here!
@@ -141,6 +145,7 @@ namespace TheCollector
                     case "1. Monk":
                         {
                             // presumably, monk stats are listed in the .json
+                            // update: they are not. are they in the code, or should this be fixed?
                             break;
                         }
                     case "2. Survivor":

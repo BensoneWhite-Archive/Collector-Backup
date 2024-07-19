@@ -46,7 +46,7 @@ public class PearlCollar
             return;
         }
         self.Yippee().pearlstorage?.GraphicsModuleUpdated(actuallyViewed, eu);
-        orig(self, actuallyViewed, eu);
+        orig(self, actuallyViewed, eu); // why is the graphics module updated again after this? is this redundant, or needed?
     }
 
 

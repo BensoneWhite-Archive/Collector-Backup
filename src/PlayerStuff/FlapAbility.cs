@@ -10,76 +10,87 @@ namespace TheCollector
 
         public static void init()
         {
-            On.Player.Update += Glide;
+            // On.Player.Update += Glide; // temporarily disabled due to issues
             On.Player.Update += Flap;
         }
 
         private static void Flap(On.Player.orig_Update orig, Player self, bool eu)
         {
             if (!self.dead && self != null && self.room != null && self.Consious && self.firstChunk.pos != null &&
-                self.slugcatStats.name.value == "TheCollector" && self.GetCollector().isCollector)
+                self.GetCollector().isCollector)
             {
                 try {
                     var room = self.room;
                     var input = self.input;
 
-                    if (self.GetCollector().JumpCollectorLock > 0)
+                    // BOOLS FOR FLAPPING
+                    bool meatmaulback = self.eatMeat > 20 || self.maulTimer > 15 || self.onBack != null; // eating meat, mauling, on another slugcats back
+                    bool onfloor = self.lowerBodyFramesOnGround > 1; // touching the ground for 2+ frames
+                    bool inshortcut = self.enteringShortCut != null || self.inShortcut || self.shortcutDelay != 0; // in shortcut
+                    bool notawake = !self.Consious || self.dead || self.canWallJump > 0 || self.jumpStun != 0; // not stunned or walljump locked
+                    bool xboxleikwater = self.submerged || self.goIntoCorridorClimb > 0; // underwater or in a pipe
+                    bool zerog = self.bodyMode == Player.BodyModeIndex.ZeroG || room.gravity == 0f || self.gravity == 0f; // is in 0 gravity
+
+                    // and the long ones
+                    bool polemode = self.animation == Player.AnimationIndex.HangFromBeam ||
+                        self.animation == Player.AnimationIndex.ClimbOnBeam ||
+                        self.animation == Player.AnimationIndex.ZeroGPoleGrab ||
+                        self.animation == Player.AnimationIndex.GetUpOnBeam ||
+                        self.animation == Player.AnimationIndex.StandOnBeam ||
+                        self.animation == Player.AnimationIndex.AntlerClimb ||
+                        self.animation == Player.AnimationIndex.HangUnderVerticalBeam ||
+                        self.animation == Player.AnimationIndex.BeamTip ||
+                        self.animation == Player.AnimationIndex.VineGrab ||
+                        self.animation == Player.AnimationIndex.GetUpToBeamTip;
+                    // on a pole or vine, or interacting with such
+                    bool bodymodesaysno = self.bodyMode == Player.BodyModeIndex.CorridorClimb ||
+                        self.bodyMode == Player.BodyModeIndex.Crawl ||
+                        self.bodyMode == Player.BodyModeIndex.WallClimb ||
+                        self.bodyMode == Player.BodyModeIndex.Swimming ||
+                        self.bodyMode == Player.BodyModeIndex.ClimbingOnBeam ||
+                        self.bodyMode == Player.BodyModeIndex.ClimbIntoShortCut;
+                    // not in a corridor, not crawling, not wallclimbing, not swimming, not climbing on pole, not going into shortcut
+                    bool animationsaysno = self.animation == Player.AnimationIndex.CorridorTurn ||
+                        self.animation == Player.AnimationIndex.LedgeCrawl ||
+                        self.animation == Player.AnimationIndex.BellySlide ||
+                        self.animation == Player.AnimationIndex.SurfaceSwim ||
+                        self.animation == Player.AnimationIndex.DeepSwim;
+                    // not turning in pipe, not on ledge, not sliding, not swimming (x2)
+                    // END BOOLS FOR FLAPPING
+
+                    if (self.GetCollector().NeonWantsDebugLogsUwU)
                     {
-                        self.GetCollector().JumpCollectorLock--;
+                        if (self.wantToJump > 0)
+                        {
+                            Debug.Log("Collector wants to jump!");
+                            if (self.canJump <= 0)
+                            {
+                                Debug.Log("Collector should not ordinarily be able to jump...");
+                                if (self.GetCollector().Jumptimer <= 0) { Debug.Log("But jumptimer is zero, so wingflapping is ok!"); }
+                            }
+                        }
+                        if (meatmaulback) { Debug.Log("Collector eating meat, mauling, or on another slugcat's back"); }
+                        if (onfloor) { Debug.Log("Collector is on the ground"); }
+                        if (inshortcut) { Debug.Log("Collector is playing in shortcuts"); }
+                        if (notawake) { Debug.Log("Collector dead, stunned, walljumping, or jumpstunned"); }
+                        if (xboxleikwater) { Debug.Log("Collector underwater or in pipe"); }
+                        if (polemode) { Debug.Log("Collector on a pole, vine, or similar"); }
+                        if (zerog) { Debug.Log("Ew, zero gravity"); }
+                        if (bodymodesaysno) { Debug.Log("Bodymode says no flap"); }
+                        if (animationsaysno) { Debug.Log("Animation says no flap"); }
                     }
-                    Debug.Log("oooou collectortime. jumplock is: " + self.GetCollector().JumpCollectorLock);
 
                     // END VARIABLES ----------------------------------------------------------------------------------------------
                     // now we get to the juice
-                    if (input != null && self.GetCollector().JumpCollectorLock == 0 &&
-                        // if not locked out of jumping
-                        self.animation != null && self.bodyMode != null &&
-                        // makes sure things arent null
-                        self.wantToJump > 0 && self.GetCollector().Jumptimer <= 0 && self.canJump <= 0 &&
+                    if (self.wantToJump > 0 && self.GetCollector().Jumptimer <= 0 && self.canJump <= 0 &&
                         // attempting to jump
-                        self.eatMeat <= 20 && self.maulTimer <= 15 && self.onBack == null &&
-                        // not eating meat, not mauling, not on another slugcats back
-                        self.canJump == 0 && self.lowerBodyFramesOnGround <= 1 &&
-                        // cannot normally jump and had its lower body on the ground for less than/equal to 1 frame
-                        self.enteringShortCut == null && !self.inShortcut && self.shortcutDelay == 0 &&
-                        // not entering, inside a shortcut, or in a shortcut delay state
-                        self.Consious && !self.dead && self.canWallJump == 0 && self.jumpStun == 0 &&
-                        // is awake, not dead, cannot wall jump, not jumpstunned
-                        !self.submerged && self.goIntoCorridorClimb <= 0 &&
-                        // is not underwater and not climbing through a pipe
-                        self.animation != Player.AnimationIndex.VineGrab &&
-                        self.animation != Player.AnimationIndex.CorridorTurn &&
-                        self.animation != Player.AnimationIndex.LedgeCrawl &&
-                        self.animation != Player.AnimationIndex.BellySlide &&
-                        self.animation != Player.AnimationIndex.SurfaceSwim &&
-                        self.animation != Player.AnimationIndex.DeepSwim &&
-                        // animation indexes
-                        self.bodyMode != Player.BodyModeIndex.CorridorClimb &&
-                        self.bodyMode != Player.BodyModeIndex.Crawl &&
-                        self.bodyMode != Player.BodyModeIndex.WallClimb &&
-                        self.bodyMode != Player.BodyModeIndex.Swimming &&
-                        self.bodyMode != Player.BodyModeIndex.ClimbingOnBeam &&
-                        self.bodyMode != Player.BodyModeIndex.ClimbIntoShortCut &&
-                        // body mode indexes
-                        self.animation != Player.AnimationIndex.HangFromBeam &&
-                        self.animation != Player.AnimationIndex.ClimbOnBeam &&
-                        self.animation != Player.AnimationIndex.ZeroGPoleGrab &&
-                        self.animation != Player.AnimationIndex.GetUpOnBeam &&
-                        self.animation != Player.AnimationIndex.StandOnBeam &&
-                        self.animation != Player.AnimationIndex.AntlerClimb &&
-                        self.animation != Player.AnimationIndex.HangUnderVerticalBeam &&
-                        self.animation != Player.AnimationIndex.BeamTip &&
-                        self.animation != Player.AnimationIndex.GetUpToBeamTip &&
-                        // beam things
-                        self.bodyMode == Player.BodyModeIndex.ZeroG && room.gravity > 0f && self.gravity > 0f &&
-                        // makes sure the player IS NOT in zero gravity
-                        self.input[0].jmp && !self.input[1].jmp
-                        // if the input in that exact frame is bound to the jump key, and the previous frame WAS NOT pressing jump
-                        )
+                        !meatmaulback && !onfloor && !inshortcut && !notawake &&
+                        !xboxleikwater && !zerog && !polemode &&
+                        !bodymodesaysno && !animationsaysno)
                     {
-                        Debug.Log("Wings flapped");
+                        if (self.GetCollector().NeonWantsDebugLogsUwU) { Debug.Log("Wings flapped!"); }
                         self.GetCollector().CollectorJumped = true; // flapped wings
-                        self.GetCollector().JumpCollectorLock = 40; // prevents doing so again for this long
+                        self.GetCollector().Jumptimer += 40; // prevents doing so again for this long
                         self.GetCollector().NoGrabCollector = 5; // locks grabs for this long
                         Vector2 pos = self.firstChunk.pos; // body position but more readable
 
@@ -116,8 +127,8 @@ namespace TheCollector
                         if (input[0].x != 0)
                         {
                             // if left/right input is not zero
-                            self.bodyChunks[0].vel.y += Mathf.Min(self.bodyChunks[0].vel.y, 0f) + 8f;
-                            self.bodyChunks[1].vel.y += Mathf.Min(self.bodyChunks[1].vel.y, 0f) + 7f;
+                            self.bodyChunks[0].vel.y += Mathf.Min(self.bodyChunks[0].vel.y, 0f) + 4f;
+                            self.bodyChunks[1].vel.y += Mathf.Min(self.bodyChunks[1].vel.y, 0f) + 3f;
                             // returns whichever number is smaller, the y velocity or 0f, and adds the float to it
                             self.jumpBoost = 6f;
                             // sets the jump boost to a hard 6f
@@ -126,22 +137,22 @@ namespace TheCollector
                         if (input[0].x == 0 || input[0].y == 1)
                         {
                             // if left/right input is zero OR up is being held
-                            self.bodyChunks[0].vel.y += 16f;
-                            self.bodyChunks[1].vel.y += 15f;
+                            self.bodyChunks[0].vel.y += 6f;
+                            self.bodyChunks[1].vel.y += 7f;
                             self.jumpBoost = 10f;
                         }
 
                         if (input[0].y == 1)
                         {
                             // if input is up, goes a shorter distance left/right
-                            self.bodyChunks[0].vel.x += 10f * input[0].x;
-                            self.bodyChunks[1].vel.x += 8f * input[0].x;
+                            self.bodyChunks[0].vel.x += 2f * input[0].x;
+                            self.bodyChunks[1].vel.x += 3f * input[0].x;
                         }
                         else
                         {
                             // otherwise, goes a longer distance
-                            self.bodyChunks[0].vel.x += 15f * input[0].x;
-                            self.bodyChunks[1].vel.x += 13f * input[0].x;
+                            self.bodyChunks[0].vel.x += 4f * input[0].x;
+                            self.bodyChunks[1].vel.x += 5f * input[0].x;
                         }
 
                         self.GetCollector().JumpCollectorCount++;
@@ -294,6 +305,9 @@ namespace TheCollector
                                         self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y - speed;
                                         self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y + 1f;
                                     }
+
+                                    try { self.GetCollector().windSound.Update(); }
+                                    catch (Exception e) { Debug.Log("Collector (windsound update) is being a little bitch: " + e); }
                                 }
                                 else if (self.GetCollector().UnlockedVerticalFlight)
                                 {
@@ -406,10 +420,10 @@ namespace TheCollector
                         {
                             self.GetCollector().preventGrabs--;
                         }
+                        try { self.GetCollector().windSound.Update(); }
+                        catch (Exception e) { Debug.Log("Collector (windsound update) is being a little bitch: " + e); }
                     }
 
-                    try { self.GetCollector().windSound.Update(); }
-                    catch (Exception e) { Debug.Log("Collector (windsound update) is being a little bitch: " + e); }
                 }
                 catch (Exception e)
                 {

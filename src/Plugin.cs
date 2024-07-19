@@ -3,7 +3,7 @@
 
 namespace TheCollector
 {
-    [BepInDependency("slime-cubed.slugbase")]
+    [BepInDependency("slime-cubed.slugbase", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("dressmyslugcat", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("MSC", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("MoreSlugcats", BepInDependency.DependencyFlags.SoftDependency)] // theres two cause i forget which is its name. skull emoji
@@ -19,10 +19,6 @@ namespace TheCollector
             On.RainWorld.OnModsInit += RainWorld_OnModsInit;
             // initiates collector and all submodules
         }
-
-        public static readonly PlayerFeature<int> slideStamina = PlayerInt("collector/SlideStamina");
-        public static readonly PlayerFeature<float> SlideRecovery = PlayerFloat("collector/SlideRecovery");
-        public static readonly PlayerFeature<float> SlideSpeed = PlayerFloat("collector/SlideSpeed");
 
         private void RainWorld_OnModsInit(On.RainWorld.orig_OnModsInit orig, RainWorld self)
         {

@@ -7,21 +7,24 @@ namespace TheCollector
     {
         public class VariableInit
         {
+            public bool NeonWantsDebugLogsUwU;
+
             public float SlideRecovery => UnlockedExtraStamina ? SlideStaminaRecoveryBase * 1.2f : SlideStaminaRecoveryBase;
+            // time it takes to bounce back after a slide
             public float MinimumSlideStamina => SlideStaminaMax * 0.1f;
 
-            public readonly float SlideStaminaRecoveryBase;
+            public readonly float SlideStaminaRecoveryBase; // why is the readonly part necessary?
             public float SlideStamina;
             public float SlideSpeed;
 
-            public int SlideStaminaMax => UnlockedExtraStamina ? (int)(SlideStaminaMaxBase * 1.6f) : SlideStaminaMaxBase;
+            public int SlideStaminaMax => UnlockedExtraStamina ? (int)(SlideStaminaMaxBase * 1.6f) : SlideStaminaMaxBase; // max stamina
 
             public readonly int SlideStaminaMaxBase;
             public int slideStaminaRecoveryCooldown;
             public int slideDuration;
-            public int timeSinceLastSlide;
+            public int timeSinceLastSlide; // probably should have a cap to prevent lag issues
             public int preventSlide;
-            public int preventGrabs;
+            public int preventGrabs; // isnt this the same as NoGrabCollector?
 
             public bool CanSlide => SlideStaminaMax > 0 && SlideSpeed > 0;
 
@@ -29,19 +32,16 @@ namespace TheCollector
             public bool isCollector;
             public bool isSliding;
             public bool UnlockedExtraStamina;
-            public bool UnlockedVerticalFlight;
+            public bool UnlockedVerticalFlight; // should this be removed?
 
-            public readonly SlugcatStats.Name Name;
-            public SlugBaseCharacter Character;
-            public WeakReference<Player> collectorRef;
+            public WeakReference<Player> collectorRef; // what is this used for?
 
-            public DynamicSoundLoop windSound;
+            public DynamicSoundLoop windSound; // this causes many errors at the moment.
 
-            public int JumpCollectorLock;
-            public int cooldownAlone;
-            public int JumpCollectorCount;
-            public int NoGrabCollector;
-            public int Jumptimer;
+            public int cooldownAlone; // ??
+            public int JumpCollectorCount; // counts the number of jumps made. shouldnt really be necessary
+            public int NoGrabCollector; // time that grabbing objects should be prevented
+            public int Jumptimer; // prevents col from jumping too soon after other movements
 
             public bool CollectorJumped; // checks if collector has jumped
             public bool Jumping; // likely redundant?
