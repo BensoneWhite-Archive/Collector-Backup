@@ -1,9 +1,10 @@
 ﻿namespace TheCollector;
 
-internal class FlapAbility
+public class FlapAbility
 {
     //This should be inside the CWT
     public static bool LimitSpeed = true;
+
     public static float speed;
 
     public static void init()
@@ -20,7 +21,8 @@ internal class FlapAbility
 
         if (!self.dead && self != null && self.room != null && self.Consious && self.firstChunk.pos != null)
         {
-            try {
+            try
+            {
                 var room = self.room;
                 var input = self.input;
 
@@ -63,22 +65,22 @@ internal class FlapAbility
                 {
                     if (self.wantToJump > 0)
                     {
-                        Debug.Log("Collector wants to jump!");
+                        Plugin.DebugLog("Collector wants to jump!");
                         if (self.canJump <= 0)
                         {
-                            Debug.Log("Collector should not ordinarily be able to jump...");
-                            if (collector.Jumptimer <= 0) { Debug.Log("But jumptimer is zero, so wingflapping is ok!"); }
+                            Plugin.DebugLog("Collector should not ordinarily be able to jump...");
+                            if (collector.Jumptimer <= 0) { Plugin.DebugLog("But jumptimer is zero, so wingflapping is ok!"); }
                         }
                     }
-                    if (meatmaulback) { Debug.Log("Collector eating meat, mauling, or on another slugcat's back"); }
-                    if (onfloor) { Debug.Log("Collector is on the ground"); }
-                    if (inshortcut) { Debug.Log("Collector is playing in shortcuts"); }
-                    if (notawake) { Debug.Log("Collector dead, stunned, walljumping, or jumpstunned"); }
-                    if (xboxleikwater) { Debug.Log("Collector underwater or in pipe"); }
-                    if (polemode) { Debug.Log("Collector on a pole, vine, or similar"); }
-                    if (zerog) { Debug.Log("Ew, zero gravity"); }
-                    if (bodymodesaysno) { Debug.Log("Bodymode says no flap"); }
-                    if (animationsaysno) { Debug.Log("Animation says no flap"); }
+                    if (meatmaulback) { Plugin.DebugLog("Collector eating meat, mauling, or on another slugcat's back"); }
+                    if (onfloor) { Plugin.DebugLog("Collector is on the ground"); }
+                    if (inshortcut) { Plugin.DebugLog("Collector is playing in shortcuts"); }
+                    if (notawake) { Plugin.DebugLog("Collector dead, stunned, walljumping, or jumpstunned"); }
+                    if (xboxleikwater) { Plugin.DebugLog("Collector underwater or in pipe"); }
+                    if (polemode) { Plugin.DebugLog("Collector on a pole, vine, or similar"); }
+                    if (zerog) { Plugin.DebugLog("Ew, zero gravity"); }
+                    if (bodymodesaysno) { Plugin.DebugLog("Bodymode says no flap"); }
+                    if (animationsaysno) { Plugin.DebugLog("Animation says no flap"); }
                 }
 
                 // END VARIABLES ----------------------------------------------------------------------------------------------
@@ -89,7 +91,7 @@ internal class FlapAbility
                     !xboxleikwater && !zerog && !polemode &&
                     !bodymodesaysno && !animationsaysno)
                 {
-                    if (collector.NeonWantsDebugLogsUwU) { Debug.Log("Wings flapped!"); }
+                    if (collector.NeonWantsDebugLogsUwU) { Plugin.DebugLog("Wings flapped!"); }
                     collector.CollectorJumped = true; // flapped wings
                     collector.Jumptimer += 40; // prevents doing so again for this long
                     collector.NoGrabCollector = 5; // locks grabs for this long
@@ -115,13 +117,11 @@ internal class FlapAbility
                                 break;
                                 // if running into something, cancels flight
                             }
-
                         }
                     }
 
                     room.PlaySound(TCEnums.Sound.flap, pos);
                     // fwoosh
-
 
                     // VELOCITY THINGS ----------------------------------------------------------------------------------------------
                     // added a split since the variables will likely need to be changed
@@ -201,7 +201,7 @@ internal class FlapAbility
             }
             catch (Exception e)
             {
-                Debug.Log("Collector (flap) is being a little bitch: " + e);
+                Plugin.DebugError("Collector (flap) is being a little bitch: " + e);
             }
         }
     }
@@ -212,32 +212,33 @@ internal class FlapAbility
 
         if (!self.IsCollector(out var collector)) return;
 
+        //Keeping this, the CanSustainSlide method from player data is updated
+        bool canglide = collector.SlideStamina > 0
+             && collector.preventSlide == 0
+             && self.canJump <= 0
+             && self.bodyMode != Player.BodyModeIndex.Crawl
+             && self.bodyMode != Player.BodyModeIndex.CorridorClimb
+             && self.bodyMode != Player.BodyModeIndex.ClimbIntoShortCut
+             && self.animation != Player.AnimationIndex.HangFromBeam
+             && self.animation != Player.AnimationIndex.ClimbOnBeam
+             && self.bodyMode != Player.BodyModeIndex.WallClimb
+             && self.bodyMode != Player.BodyModeIndex.Swimming
+             && self.Consious
+             && !self.Stunned
+             && self.animation != Player.AnimationIndex.AntlerClimb
+             && self.animation != Player.AnimationIndex.VineGrab
+             && self.animation != Player.AnimationIndex.ZeroGPoleGrab;
+
+        const float normalGravity = 0.9f;
+        const float normalAirFriction = 0.999f;
+        const float flightGravity = -0.25f;
+        const float flightAirFriction = 0.83f;
+        const float flightKickinDuration = 6f;
+
         if (self != null && self.room != null && !self.dead && self.bodyMode != null && self.firstChunk.pos != null)
         {
-            try {
-                const float normalGravity = 0.9f;
-                const float normalAirFriction = 0.999f;
-                const float flightGravity = 0.12f;
-                const float flightAirFriction = 0.7f;
-                const float flightKickinDuration = 6f;
-
-                bool canglide = collector.SlideStamina > 0
-                && collector.preventSlide == 0
-                && self.canJump <= 0
-                && self.bodyMode != Player.BodyModeIndex.Crawl
-                && self.bodyMode != Player.BodyModeIndex.CorridorClimb
-                && self.bodyMode != Player.BodyModeIndex.ClimbIntoShortCut
-                && self.animation != Player.AnimationIndex.HangFromBeam
-                && self.animation != Player.AnimationIndex.ClimbOnBeam
-                && self.bodyMode != Player.BodyModeIndex.WallClimb
-                && self.bodyMode != Player.BodyModeIndex.Swimming
-                && self.Consious
-                && !self.Stunned
-                && self.animation != Player.AnimationIndex.AntlerClimb
-                && self.animation != Player.AnimationIndex.VineGrab
-                && self.animation != Player.AnimationIndex.ZeroGPoleGrab;
-
-
+            try
+            {
                 if (collector.CanSlide)
                 {
                     if (self.animation != null && self.animation == Player.AnimationIndex.HangFromBeam)
@@ -254,13 +255,11 @@ internal class FlapAbility
                         speed = 2f;
                         LimitSpeed = true;
                         // if not sliding, limit the speed  to 2f
-                    }
-                    
-                    if (collector.isSliding)
-                    {
                         // if she IS sliding
                         collector.windSound.Volume = Mathf.Lerp(0f, 0.4f, collector.slideDuration / flightKickinDuration);
+
                         collector.slideDuration++;
+
                         self.AerobicIncrease(0.0001f);
 
                         self.gravity = Mathf.Lerp(normalGravity, flightGravity, collector.slideDuration / flightKickinDuration);
@@ -288,7 +287,6 @@ internal class FlapAbility
                                 self.bodyChunks[1].vel.x = self.bodyChunks[1].vel.x + 1f;
                             }
 
-
                             if (self.room.gravity <= 0.5)
                             {
                                 // this probably should not be here, as collector shouldnt be able to fly in 0g? should ask
@@ -306,7 +304,7 @@ internal class FlapAbility
                                 }
 
                                 try { collector.windSound.Update(); }
-                                catch (Exception e) { Debug.Log("Collector (windsound update) is being a little bitch: " + e); }
+                                catch (Exception e) { Plugin.DebugLog("Collector (windsound update) is being a little bitch: " + e); }
                             }
                             else if (collector.UnlockedVerticalFlight)
                             {
@@ -359,7 +357,7 @@ internal class FlapAbility
                             else if (self.input != null &&
                                 collector.UnlockedVerticalFlight)
                             {
-                            // this should not be called in normal gameplay, and i assume is here for fun
+                                // this should not be called in normal gameplay, and i assume is here for fun
                                 if (self.input[0].y > 0)
                                 {
                                     self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y + speed * 0.5f;
@@ -375,21 +373,18 @@ internal class FlapAbility
                             {
                                 collector.StopSliding();
                             }
-                        }
 
+                            if (!self.input[0].jmp || !collector.CanSustainSlide())
+                            {
+                                collector.StopSliding();
+                            }
+                        }
 
                         collector.slideStaminaRecoveryCooldown = 40;
                         collector.SlideStamina--;
-
-                        if (!self.input[0].jmp || !canglide)
-                        {
-                            collector.StopSliding();
-                        }
-
                     }
                     else
                     {
-                        // if NOT sliding
                         collector.windSound.Volume = Mathf.Lerp(1f, 0f, collector.timeSinceLastSlide / flightKickinDuration);
                         collector.timeSinceLastSlide++;
                         collector.windSound.Volume = 0f;
@@ -403,32 +398,31 @@ internal class FlapAbility
                                 collector.SlideRecovery, collector.SlideStaminaMax);
                         }
                         if (self.wantToJump > 0 && collector.SlideStamina > collector.MinimumSlideStamina &&
-                        canglide && collector.CollectorJumped)
+                        collector.CanSustainSlide() && collector.CollectorJumped)
                         {
-                        self.bodyMode = Player.BodyModeIndex.Default;
-                        self.animation = Player.AnimationIndex.None;
-                        self.wantToJump = 0;
-                        collector.slideDuration = 0;
-                        collector.timeSinceLastSlide = 0;
-                        collector.isSliding = true;
-                    }
+                            self.bodyMode = Player.BodyModeIndex.Default;
+                            self.animation = Player.AnimationIndex.None;
+                            self.wantToJump = 0;
+                            collector.slideDuration = 0;
+                            collector.timeSinceLastSlide = 0;
+                            collector.isSliding = true;
+                        }
+
                         self.airFriction = normalAirFriction;
                         self.gravity = normalGravity;
-                    }
-                    if (collector.preventGrabs > 0)
-                    {
-                        collector.preventGrabs--;
-                    }
-                    try { collector.windSound.Update(); }
-                    catch (Exception e) { Debug.Log("Collector (windsound update) is being a little bitch: " + e); }
-                }
 
+                        if (collector.preventGrabs > 0)
+                        {
+                            collector.preventGrabs--;
+                        }
+                        collector.windSound.Update();
+                    }
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.Log("Collector (glide) is being a little bitch: " + e);
+                Plugin.DebugError(ex);
             }
         }
     }
-    // end flapability
 }

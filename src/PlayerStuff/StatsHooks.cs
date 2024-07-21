@@ -31,6 +31,7 @@ public class StatsHooks
         if (!self.IsCollector(out var collector)) return;
 
         // Turn this to true for even more extra debug logs. a frankly ridiculous amount of them
+        //This can be changed as a press key and turn it on true, maybe pressing 2 numpads numbers?
         collector.NeonWantsDebugLogsUwU = false;
     }
 
@@ -71,7 +72,7 @@ public class StatsHooks
 
     private static bool Player_CanBeSwallowed(On.Player.orig_CanBeSwallowed orig, Player self, PhysicalObject testObj)
     {
-        if(!self.IsCollector(out _)) return orig(self, testObj);
+        if (!self.IsCollector(out _)) return orig(self, testObj);
 
         if (testObj != null && self != null &&
             // preventing null errors
@@ -182,5 +183,6 @@ public class StatsHooks
             // this replaces vanilla. i cant tell if this is higher or lower than average. i presume higher?
         }
     }
+
     // end stat tweaks
 }

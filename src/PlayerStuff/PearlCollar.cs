@@ -1,6 +1,6 @@
 ﻿namespace TheCollector;
 
-public class PearlCollar  
+public class PearlCollar
 {
     public static void Init()
     {
@@ -40,14 +40,13 @@ public class PearlCollar
         }
         catch (Exception err)
         {
-            Debug.Log("Error involving slugcat name within Player.GraphicsModuleUpdated:" + err);
+            Plugin.DebugLog("Error involving slugcat name within Player.GraphicsModuleUpdated:" + err);
             orig(self, actuallyViewed, eu);
             return;
         }
         self.Yippee().pearlstorage?.GraphicsModuleUpdated(actuallyViewed, eu);
         orig(self, actuallyViewed, eu); // why is the graphics module updated again after this? is this redundant, or needed?
     }
-
 
     // end pearlcollar
 }

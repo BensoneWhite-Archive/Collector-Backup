@@ -35,9 +35,4 @@ public static class TCEnums
         public static SoundID flap = new(nameof(flap), true);
         public static SoundID wind = new(nameof(wind), true);
     }
-
-    public static class Color
-    {
-    }
 }
-

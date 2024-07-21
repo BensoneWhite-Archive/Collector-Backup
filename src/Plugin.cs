@@ -5,16 +5,43 @@
 [BepInDependency("MSC", BepInDependency.DependencyFlags.SoftDependency)]
 [BepInDependency("MoreSlugcats", BepInDependency.DependencyFlags.SoftDependency)] // theres two cause i forget which is its name. skull emoji
 [BepInPlugin("TheCollector", "The Collector", "0.1.0")]
-
-public class CollectorPlugin : BaseUnityPlugin
+public class Plugin : BaseUnityPlugin
 {
+    public const string MOD_ID = "TheCollector";
+    public const string MOD_NAME = "The Collector";
+    public const string VERSION = "0.1.0";
+
     private static bool _Initialized;
     private TheCollectorOptionsMenu optionsMenuInstance;
 
+    public static void DebugLog(object ex) => Logger.LogInfo(ex);
+
+    public static void DebugWarning(object ex) => Logger.LogWarning(ex);
+
+    public static void DebugError(object ex) => Logger.LogError(ex);
+
+    public static void DebugFatal(object ex) => Logger.LogFatal(ex);
+
+    public new static ManualLogSource Logger;
+
     public void OnEnable()
     {
-        On.RainWorld.OnModsInit += RainWorld_OnModsInit;
-        // initiates collector and all submodules
+        try
+        {
+            //Since 1.9.14 update the logs are a bit broken, it's better to use the BepInEx Logger
+            Logger = base.Logger;
+            DebugWarning($"{MOD_NAME} is loading.... {VERSION}");
+
+            TCEnums.Init();
+
+            On.RainWorld.OnModsInit += RainWorld_OnModsInit;
+            // initiates collector and all submodules
+        }
+        catch (Exception ex)
+        {
+            DebugError(ex);
+            Debug.LogException(ex); //Log exception from unity is the only exception to the base game update
+        }
     }
 
     private void RainWorld_OnModsInit(On.RainWorld.orig_OnModsInit orig, RainWorld self)
@@ -22,10 +49,11 @@ public class CollectorPlugin : BaseUnityPlugin
         orig(self);
         try
         {
-            if (_Initialized) { return; }
+            if (_Initialized) return;
             _Initialized = true;
 
-            TCEnums.Init();
+            DebugWarning($"Initializing OnModsInit {MOD_NAME}");
+
             PearlCollar.Init();
 
             StatsHooks.Init();
@@ -40,12 +68,9 @@ public class CollectorPlugin : BaseUnityPlugin
         }
         catch (Exception ex)
         {
-            Debug.Log($"Remix Menu: Hook_OnModsInit options failed init error {optionsMenuInstance}{ex}");
-            Debug.Log("COLLECTOR ERROR: " + ex);
-        }
-        finally
-        {
-            orig.Invoke(self);
+            DebugError($"Remix Menu: Hook_OnModsInit options failed init error {optionsMenuInstance}{ex}");
+            DebugError("COLLECTOR ERROR: " + ex);
+            Debug.LogError(ex);
         }
     }
 
@@ -80,5 +105,6 @@ public class CollectorPlugin : BaseUnityPlugin
         }
         // end dms sprite setup
     }
+
     // end plugin
-}    
+}

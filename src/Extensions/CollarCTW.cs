@@ -2,8 +2,6 @@
 
 public static class CollarCWT
 {
-    // this code is so hard to parse. ok.
-
     private static readonly ConditionalWeakTable<Player, PearlCollection> CWT = new();
     // conditional weak table involving the player and the pearlcollection
 
@@ -32,7 +30,6 @@ public static class CollarCWT
             public AbstractPorls(AbstractPhysicalObject player, AbstractPhysicalObject pearl)
                 : base(player, pearl)
             {
-
             }
         }
 
@@ -143,12 +140,11 @@ public static class CollarCWT
                 Owner.noPickUpOnRelease = 20;
                 Owner.room?.PlaySound(TCEnums.Sound.porl, Owner.mainBodyChunk);
                 abstractNutz.Push(new AbstractPorls(Owner.abstractPhysicalObject, DataUnfold.abstractPhysicalObject));
-                Debug.LogWarning("Collector moved porl from paw to storage! Storage index is now: " + deezNuts.Count);
+                Plugin.DebugError("Collector moved porl from paw to storage! Storage index is now: " + deezNuts.Count);
             }
 
             private void GoogleTranslateDidntWork(bool Cause, Player self)
             {
-
                 for (int index = 0; index < Owner.grasps.Length; index++)
                 {
                     if (Owner.grasps[index] is not null && Owner.Grabability(Owner.grasps[index].grabbed) >= Player.ObjectGrabability.TwoHands)
@@ -181,14 +177,15 @@ public static class CollarCWT
                         Owner.ReleaseGrasp(0);
                         Owner.noPickUpOnRelease = 20;
                         Owner.room?.PlaySound(TCEnums.Sound.porl, Owner.mainBodyChunk);
-                        Debug.LogWarning("Successfully moved porl from storage to paw! Storage index is now: " + deezNuts.Count);
+                        Plugin.DebugWarning("Successfully moved porl from storage to paw! Storage index is now: " + deezNuts.Count);
                     }
                     else
                     {
-                        Debug.LogWarning("Could not move porl from storage to paw! Storage index is now: " + deezNuts.Count);
+                        Plugin.DebugWarning("Could not move porl from storage to paw! Storage index is now: " + deezNuts.Count);
                     }
                 }
             }
+
             // end abstractpearls
         }
 
@@ -197,5 +194,6 @@ public static class CollarCWT
             pearlstorage = new CollectedPearls(player);
         }
     }
+
     // end disdain
 }

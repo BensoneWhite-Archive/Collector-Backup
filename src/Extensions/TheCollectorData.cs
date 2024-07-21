@@ -5,6 +5,7 @@ public class TheCollectorData
     public bool NeonWantsDebugLogsUwU;
 
     public float SlideRecovery => UnlockedExtraStamina ? SlideStaminaRecoveryBase * 1.2f : SlideStaminaRecoveryBase;
+
     // time it takes to bounce back after a slide
     public float MinimumSlideStamina => SlideStaminaMax * 0.1f;
 
@@ -63,6 +64,35 @@ public class TheCollectorData
         slideDuration = 0;
         timeSinceLastSlide = 0;
         isSliding = false;
+    }
+
+    public void InitiateSlide()
+    {
+        player.bodyMode = BodyModeIndex.Default;
+        player.animation = AnimationIndex.None;
+        player.wantToJump = 0;
+        slideDuration = 0;
+        timeSinceLastSlide = 0;
+        isSliding = true;
+    }
+
+    public bool CanSustainSlide()
+    {
+        return SlideStamina > 0 &&
+               preventSlide <= 0 &&
+               player.canJump <= 0 &&
+               player.canWallJump == 0 &&
+               player.Consious &&
+               player.bodyMode != BodyModeIndex.Crawl &&
+               player.bodyMode != BodyModeIndex.CorridorClimb &&
+               player.bodyMode != BodyModeIndex.ClimbIntoShortCut &&
+               player.animation != AnimationIndex.HangFromBeam &&
+               player.animation != AnimationIndex.ClimbOnBeam &&
+               player.bodyMode != BodyModeIndex.WallClimb &&
+               player.bodyMode != BodyModeIndex.Swimming &&
+               player.animation != AnimationIndex.AntlerClimb &&
+               player.animation != AnimationIndex.VineGrab &&
+               player.animation != AnimationIndex.ZeroGPoleGrab;
     }
 
     private void SetupSounds(Player player)
