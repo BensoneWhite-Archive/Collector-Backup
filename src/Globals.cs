@@ -12,3 +12,16 @@ global using static SlugBase.Features.FeatureTypes;
 global using SlugBase.Features;
 global using DressMySlugcat;
 global using System.Security.Permissions;
+global using System.Runtime.CompilerServices;
+global using SlugBase;
+global using UnityEngine.Assertions.Must;
+global using System.Text;
+global using System.Threading.Tasks;
+global using static Player;
+global using Menu.Remix.MixedUI;
+global using UnityEngine.UIElements.Experimental;
+global using System.Reflection;
+global using SlugBase.DataTypes;
+
+#pragma warning disable CS0618
+[assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]

@@ -1,47 +1,43 @@
-﻿using System.Runtime.CompilerServices;
-using System.Reflection;
+﻿namespace TheCollector;
 
-namespace TheCollector
+public static class TCEnums
 {
-    public static class TCEnums
+    public static SlugcatStats.Name TheCollector = new("TheCollector");
+
+    public static void Init()
     {
-        public static SlugcatStats.Name TheCollector = new("TheCollector");
+        RuntimeHelpers.RunClassConstructor(typeof(Sound).TypeHandle);
+    }
 
-        public static void Init()
+    public static void UnregisterEnums(Type type)
+    {
+        var extEnums = type.GetFields(BindingFlags.Static | BindingFlags.Public).Where(x => x.FieldType.IsSubclassOf(typeof(ExtEnumBase)));
+
+        foreach (var extEnum in extEnums)
         {
-            RuntimeHelpers.RunClassConstructor(typeof(Sound).TypeHandle);
-        }
-
-        public static void UnregisterEnums(Type type)
-        {
-            var extEnums = type.GetFields(BindingFlags.Static | BindingFlags.Public).Where(x => x.FieldType.IsSubclassOf(typeof(ExtEnumBase)));
-
-            foreach (var extEnum in extEnums)
+            var obj = extEnum.GetValue(null);
+            if (obj != null)
             {
-                var obj = extEnum.GetValue(null);
-                if (obj != null)
-                {
-                    obj.GetType().GetMethod("Unregister")!.Invoke(obj, null);
-                    extEnum.SetValue(null, null);
-                }
+                obj.GetType().GetMethod("Unregister")!.Invoke(obj, null);
+                extEnum.SetValue(null, null);
             }
         }
+    }
 
-        public static void Unregister()
-        {
-            UnregisterEnums(typeof(Sound));
-        }
+    public static void Unregister()
+    {
+        UnregisterEnums(typeof(Sound));
+    }
 
-        public static class Sound
-        {
-            public static SoundID porl = new(nameof(porl), true);
-            public static SoundID flap = new(nameof(flap), true);
-            public static SoundID wind = new(nameof(wind), true);
-        }
+    public static class Sound
+    {
+        public static SoundID porl = new(nameof(porl), true);
+        public static SoundID flap = new(nameof(flap), true);
+        public static SoundID wind = new(nameof(wind), true);
+    }
 
-        public static class Color
-        {
-        }
+    public static class Color
+    {
     }
 }
 

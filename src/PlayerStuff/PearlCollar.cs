@@ -1,6 +1,5 @@
-﻿// using [xyz]
+﻿namespace TheCollector;
 
-namespace TheCollector;
 public class PearlCollar  
 {
     public static void Init()
@@ -13,19 +12,19 @@ public class PearlCollar
     private static void GrabTheGoddamnPorlOrDontYourChoice(On.Player.orig_GrabUpdate orig, Player self, bool eu)
     {
         orig(self, eu);
-        if (self.GetCollector().isCollector)
-        {
-            for (int index = 0; index < self.grasps.Length; index++)
-            {
-                if (self.grasps[index]?.grabbed is IPlayerEdible) return;
-                // if its edible, dont even bother
-            }
 
-            if (self.Yippee().pearlstorage != null)
-            {
-                self.Yippee().pearlstorage.increment = self.input[0].pckp;
-                self.Yippee().pearlstorage.Update(eu, self);
-            }
+        if (!self.IsCollector(out var collector)) return;
+
+        for (int index = 0; index < self.grasps.Length; index++)
+        {
+            if (self.grasps[index]?.grabbed is IPlayerEdible) return;
+            // if its edible, dont even bother
+        }
+
+        if (self.Yippee().pearlstorage != null)
+        {
+            self.Yippee().pearlstorage.increment = self.input[0].pckp;
+            self.Yippee().pearlstorage.Update(eu, self);
         }
     }
 

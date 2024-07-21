@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace TheCollector;
+﻿namespace TheCollector;
 
 public static class CollarCWT
 {

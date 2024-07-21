@@ -1,19 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     
     <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
-    <LangVersion>11</LangVersion>
-	<PublishSingleFile>true</PublishSingleFile>
-  </PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <LangVersion>latest</LangVersion>
+		<AssemblyName>$(SolutionName)</AssemblyName>
+		<RootNamespace>TheCollector</RootNamespace>
+		<PathMap>$(MSBuildProjectDirectory)=/$(SolutionName)</PathMap>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Optimize>False</Optimize>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<Optimize>False</Optimize>
+		<DebugType>portable</DebugType>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
 	
 	<PropertyGroup>
 		<DoNotCopyLocalIfInGac>true</DoNotCopyLocalIfInGac>
@@ -32,11 +35,14 @@
 		<Copy SourceFiles="@(CopyPlugins);@(CopyPDBs)" DestinationFolder="../mod/newest/plugins/" />
 	</Target>
 
-
 	<ItemGroup>
         <Reference Include="../lib/*.dll">
             <Private>false</Private>
         </Reference>
     </ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Globals.cs~RF2d81629d.TMP" />
+	</ItemGroup>
     
 </Project>

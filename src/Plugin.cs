@@ -1,88 +1,84 @@
-﻿#pragma warning disable CS0618
-[assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
+﻿namespace TheCollector;
 
-namespace TheCollector
+[BepInDependency("slime-cubed.slugbase", BepInDependency.DependencyFlags.HardDependency)]
+[BepInDependency("dressmyslugcat", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("MSC", BepInDependency.DependencyFlags.SoftDependency)]
+[BepInDependency("MoreSlugcats", BepInDependency.DependencyFlags.SoftDependency)] // theres two cause i forget which is its name. skull emoji
+[BepInPlugin("TheCollector", "The Collector", "0.1.0")]
+
+public class CollectorPlugin : BaseUnityPlugin
 {
-    [BepInDependency("slime-cubed.slugbase", BepInDependency.DependencyFlags.HardDependency)]
-    [BepInDependency("dressmyslugcat", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("MSC", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("MoreSlugcats", BepInDependency.DependencyFlags.SoftDependency)] // theres two cause i forget which is its name. skull emoji
-    [BepInPlugin("TheCollector", "The Collector", "0.1.0")]
+    private static bool _Initialized;
+    private TheCollectorOptionsMenu optionsMenuInstance;
 
-    class CollectorPlugin : BaseUnityPlugin
+    public void OnEnable()
     {
-        static bool _Initialized;
-        private TheCollectorOptionsMenu optionsMenuInstance;
+        On.RainWorld.OnModsInit += RainWorld_OnModsInit;
+        // initiates collector and all submodules
+    }
 
-        public void OnEnable()
+    private void RainWorld_OnModsInit(On.RainWorld.orig_OnModsInit orig, RainWorld self)
+    {
+        orig(self);
+        try
         {
-            On.RainWorld.OnModsInit += RainWorld_OnModsInit;
-            // initiates collector and all submodules
-        }
+            if (_Initialized) { return; }
+            _Initialized = true;
 
-        private void RainWorld_OnModsInit(On.RainWorld.orig_OnModsInit orig, RainWorld self)
-        {
-            orig(self);
-            try
+            TCEnums.Init();
+            PearlCollar.Init();
+
+            StatsHooks.Init();
+            FlapAbility.init();
+
+            MachineConnector.SetRegisteredOI("TheCollector", optionsMenuInstance = new TheCollectorOptionsMenu());
+
+            if (ModManager.ActiveMods.Any(mod => mod.id == "dressmyslugcat"))
             {
-                if (_Initialized) { return; }
-                _Initialized = true;
+                SetupDMSSprites();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"Remix Menu: Hook_OnModsInit options failed init error {optionsMenuInstance}{ex}");
+            Debug.Log("COLLECTOR ERROR: " + ex);
+        }
+        finally
+        {
+            orig.Invoke(self);
+        }
+    }
 
-                TCEnums.Init();
-                PearlCollar.Init();
+    public void SetupDMSSprites()
+    {
+        var sheetID = "TheCollector.Legacy";
 
-                StatsHooks.Init();
-                FlapAbility.init();
-
-                MachineConnector.SetRegisteredOI("TheCollector", optionsMenuInstance = new TheCollectorOptionsMenu());
-
-                if (ModManager.ActiveMods.Any(mod => mod.id == "dressmyslugcat"))
+        for (int index = 0; index < 4; index++)
+        {
+            SpriteDefinitions.AddSlugcatDefault(new Customization()
+            {
+                Slugcat = "TheCollector",
+                PlayerNumber = index,
+                CustomSprites = new List<CustomSprite>
                 {
-                    SetupDMSSprites();
+                    new CustomSprite() { Sprite = "HEAD", SpriteSheetID = sheetID, Color = Color.white },
+                    new CustomSprite() { Sprite = "ARMS", SpriteSheetID = sheetID, Color = Color.white },
+                    new CustomSprite() { Sprite = "BODY", SpriteSheetID = sheetID, Color = Color.white },
+                    new CustomSprite() { Sprite = "HIPS", SpriteSheetID = sheetID, Color = Color.white },
+                    new CustomSprite() { Sprite = "LEGS", SpriteSheetID = sheetID, Color = Color.white },
+                    new CustomSprite() { Sprite = "TAIL", SpriteSheetID = sheetID, Color = Color.white },
+                    new CustomSprite() { Sprite = "FACE", SpriteSheetID = sheetID, Color = Color.white },
+                },
+
+                CustomTail = new CustomTail()
+                {
+                    Length = 7,
+                    Wideness = 4f,
+                    Roundness = 0.7f
                 }
-            }
-            catch (Exception ex)
-            {
-                Debug.Log($"Remix Menu: Hook_OnModsInit options failed init error {optionsMenuInstance}{ex}");
-                Debug.Log("COLLECTOR ERROR: " + ex);
-            }
-            finally
-            {
-                orig.Invoke(self);
-            }
+            });
         }
-
-        public void SetupDMSSprites()
-        {
-            var sheetID = "TheCollector.Legacy";
-
-            for (int index = 0; index < 4; index++)
-            {
-                SpriteDefinitions.AddSlugcatDefault(new Customization()
-                {
-                    Slugcat = "TheCollector",
-                    PlayerNumber = index,
-                    CustomSprites = new List<CustomSprite>
-                    {
-                        new CustomSprite() { Sprite = "HEAD", SpriteSheetID = sheetID, Color = Color.white },
-                        new CustomSprite() { Sprite = "ARMS", SpriteSheetID = sheetID, Color = Color.white },
-                        new CustomSprite() { Sprite = "BODY", SpriteSheetID = sheetID, Color = Color.white },
-                        new CustomSprite() { Sprite = "HIPS", SpriteSheetID = sheetID, Color = Color.white },
-                        new CustomSprite() { Sprite = "LEGS", SpriteSheetID = sheetID, Color = Color.white },
-                        new CustomSprite() { Sprite = "TAIL", SpriteSheetID = sheetID, Color = Color.white },
-                        new CustomSprite() { Sprite = "FACE", SpriteSheetID = sheetID, Color = Color.white },
-                    },
-
-                    CustomTail = new CustomTail()
-                    {
-                        Length = 7,
-                        Wideness = 4f,
-                        Roundness = 0.7f
-                    }
-                });
-            }
-            // end dms sprite setup
-        }
-        // end plugin
-    }    
-}
+        // end dms sprite setup
+    }
+    // end plugin
+}    
