@@ -15,12 +15,19 @@ public class TheCollectorData
     public static float SlideStaminaRecoveryBase => 10f;
     public int slideStaminaRecoveryCooldown;
 
-    public float SlideSpeed;
+    private static float SlideSpeedBase => 5f;
+    public float SlideSpeed => SlideSpeedBase;
 
     public int slideDuration;
     public int timeSinceLastSlide; // probably should have a cap to prevent lag issues
     public int preventSlide;
     public int preventGrabs; // isnt this the same as NoGrabCollector?
+
+    public float normalGravity = 0.9f;
+    public float normalAirFriction = 0.999f;
+    public float slideGravity = 0.12f;
+    public float slideAirFriction = 0.7f;
+    public float slideKickinDuration = 6f;
 
     public bool CanSlide => SlideStaminaMax > 0 && SlideSpeed > 0;
 
