@@ -4,19 +4,19 @@ public class TheCollectorData
 {
     public bool NeonWantsDebugLogsUwU;
 
-    public float SlideRecovery => UnlockedExtraStamina ? SlideStaminaRecoveryBase * 1.2f : SlideStaminaRecoveryBase;
+    public float SlideRecovery => SlideStaminaRecoveryBase;
 
     // time it takes to bounce back after a slide
     public float MinimumSlideStamina => SlideStaminaMax * 0.1f;
+    public int SlideStaminaMax => (int)SlideStaminaMaxBase; // max stamina
+    private static float SlideStaminaMaxBase => 10000f;
 
-    public readonly float SlideStaminaRecoveryBase; // why is the readonly part necessary?
     public float SlideStamina;
+    public static float SlideStaminaRecoveryBase => 10f;
+    public int slideStaminaRecoveryCooldown;
+
     public float SlideSpeed;
 
-    public int SlideStaminaMax => UnlockedExtraStamina ? (int)(SlideStaminaMaxBase * 1.6f) : SlideStaminaMaxBase; // max stamina
-
-    public readonly int SlideStaminaMaxBase;
-    public int slideStaminaRecoveryCooldown;
     public int slideDuration;
     public int timeSinceLastSlide; // probably should have a cap to prevent lag issues
     public int preventSlide;
@@ -24,24 +24,19 @@ public class TheCollectorData
 
     public bool CanSlide => SlideStaminaMax > 0 && SlideSpeed > 0;
 
-    public readonly bool Collector;
     public bool isCollector;
     public bool isSliding;
-    public bool UnlockedExtraStamina;
-    public bool UnlockedVerticalFlight; // should this be removed?
 
     public readonly Player player;
     public WeakReference<Player> collectorRef; // what is this used for?
 
     public DynamicSoundLoop windSound; // this causes many errors at the moment.
 
-    public int cooldownAlone; // ??
     public int JumpCollectorCount; // counts the number of jumps made. shouldnt really be necessary
     public int NoGrabCollector; // time that grabbing objects should be prevented
     public int Jumptimer; // prevents col from jumping too soon after other movements
 
     public bool CollectorJumped; // checks if collector has jumped
-    public bool Jumping; // likely redundant?
 
     public TheCollectorData(AbstractCreature abstractPlayer)
     {
@@ -57,6 +52,9 @@ public class TheCollectorData
         if (!isCollector) return;
 
         SetupSounds(player);
+
+        SlideStamina = SlideStaminaMax;
+        timeSinceLastSlide = 200;
     }
 
     public void StopSliding()

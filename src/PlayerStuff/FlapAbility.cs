@@ -239,190 +239,171 @@ public class FlapAbility
         {
             try
             {
-                if (collector.CanSlide)
-                {
-                    if (self.animation != null && self.animation == Player.AnimationIndex.HangFromBeam)
-                    {
-                        collector.preventSlide = 15;
-                    }
-                    else if (collector.preventSlide > 0)
-                    {
-                        collector.preventSlide--;
-                    }
 
-                    if (!collector.isSliding)
-                    {
-                        speed = 2f;
-                        LimitSpeed = true;
-                        // if not sliding, limit the speed  to 2f
-                        // if she IS sliding
-                        collector.windSound.Volume = Mathf.Lerp(0f, 0.4f, collector.slideDuration / flightKickinDuration);
-
-                        collector.slideDuration++;
-
-                        self.AerobicIncrease(0.0001f);
-
-                        self.gravity = Mathf.Lerp(normalGravity, flightGravity, collector.slideDuration / flightKickinDuration);
-                        self.airFriction = Mathf.Lerp(normalAirFriction, flightAirFriction, collector.slideDuration / flightKickinDuration);
-
-                        if (LimitSpeed)
-                        {
-                            speed = Custom.LerpAndTick(speed, 10f, 0.001f, 0.3f);
-
-                            if (speed >= 10f)
-                            {
-                                LimitSpeed = false;
-                            }
-
-                            if (self.input != null &&
-                                self.input[0].x > 0)
-                            {
-                                self.bodyChunks[0].vel.x = self.bodyChunks[0].vel.x + speed;
-                                self.bodyChunks[1].vel.x = self.bodyChunks[1].vel.x - 1f;
-                            }
-                            else if (self.input != null &&
-                                self.input[0].x < 0)
-                            {
-                                self.bodyChunks[0].vel.x = self.bodyChunks[0].vel.x - speed;
-                                self.bodyChunks[1].vel.x = self.bodyChunks[1].vel.x + 1f;
-                            }
-
-                            if (self.room.gravity <= 0.5)
-                            {
-                                // this probably should not be here, as collector shouldnt be able to fly in 0g? should ask
-                                if (self.input != null &&
-                                self.input[0].y > 0)
-                                {
-                                    self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y + speed;
-                                    self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y - 1f;
-                                }
-                                else if (self.input != null &&
-                                self.input[0].y < 0)
-                                {
-                                    self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y - speed;
-                                    self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y + 1f;
-                                }
-
-                                try { collector.windSound.Update(); }
-                                catch (Exception e) { Plugin.DebugLog("Collector (windsound update) is being a little bitch: " + e); }
-                            }
-                            else if (collector.UnlockedVerticalFlight)
-                            {
-                                // i assume this is just for fun
-                                if (self.input[0].y > 0)
-                                {
-                                    self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y + speed * 0.5f;
-                                    self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y - 0.3f;
-                                }
-                                else if (self.input[0].y < 0)
-                                {
-                                    self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y - speed;
-                                    self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y + 0.3f;
-                                }
-                            }
-                        }
-
-                        if (!LimitSpeed)
-                        {
-                            // if collector is not being rate limited
-                            speed = Custom.LerpAndTick(speed, 0f, 0.005f, 0.003f);
-
-                            if (speed == 0f)
-                            {
-                                LimitSpeed = true;
-                            }
-                            if (self.input[0].x > 0)
-                            {
-                                self.bodyChunks[0].vel.x = self.bodyChunks[0].vel.x + speed;
-                                self.bodyChunks[1].vel.x = self.bodyChunks[1].vel.x - 1f;
-                            }
-                            else if (self.input[0].x < 0)
-                            {
-                                self.bodyChunks[0].vel.x = self.bodyChunks[0].vel.x - speed;
-                                self.bodyChunks[1].vel.x = self.bodyChunks[1].vel.x + 1f;
-                            }
-                            if (self.room.gravity <= 0.5)
-                            {
-                                if (self.input[0].y > 0)
-                                {
-                                    self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y + speed;
-                                    self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y - 1f;
-                                }
-                                else if (self.input[0].y < 0)
-                                {
-                                    self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y - speed;
-                                    self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y + 1f;
-                                }
-                            }
-                            else if (self.input != null &&
-                                collector.UnlockedVerticalFlight)
-                            {
-                                // this should not be called in normal gameplay, and i assume is here for fun
-                                if (self.input[0].y > 0)
-                                {
-                                    self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y + speed * 0.5f;
-                                    self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y - 0.3f;
-                                }
-                                else if (self.input[0].y < 0)
-                                {
-                                    self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y - speed;
-                                    self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y + 0.3f;
-                                }
-                            }
-                            if (speed <= 1.2f)
-                            {
-                                collector.StopSliding();
-                            }
-
-                            if (!self.input[0].jmp || !collector.CanSustainSlide())
-                            {
-                                collector.StopSliding();
-                            }
-                        }
-
-                        collector.slideStaminaRecoveryCooldown = 40;
-                        collector.SlideStamina--;
-                    }
-                    else
-                    {
-                        collector.windSound.Volume = Mathf.Lerp(1f, 0f, collector.timeSinceLastSlide / flightKickinDuration);
-                        collector.timeSinceLastSlide++;
-                        collector.windSound.Volume = 0f;
-                        if (collector.slideStaminaRecoveryCooldown > 0)
-                        {
-                            collector.slideStaminaRecoveryCooldown--;
-                        }
-                        else
-                        {
-                            collector.SlideStamina = Mathf.Min(collector.SlideStamina +
-                                collector.SlideRecovery, collector.SlideStaminaMax);
-                        }
-                        if (self.wantToJump > 0 && collector.SlideStamina > collector.MinimumSlideStamina &&
-                        collector.CanSustainSlide() && collector.CollectorJumped)
-                        {
-                            self.bodyMode = Player.BodyModeIndex.Default;
-                            self.animation = Player.AnimationIndex.None;
-                            self.wantToJump = 0;
-                            collector.slideDuration = 0;
-                            collector.timeSinceLastSlide = 0;
-                            collector.isSliding = true;
-                        }
-
-                        self.airFriction = normalAirFriction;
-                        self.gravity = normalGravity;
-
-                        if (collector.preventGrabs > 0)
-                        {
-                            collector.preventGrabs--;
-                        }
-                        collector.windSound.Update();
-                    }
-                }
             }
             catch (Exception ex)
             {
                 Plugin.DebugError(ex);
             }
         }
+
+        Plugin.DebugWarning($"collector can slide: {collector.CanSlide}");
+        Plugin.DebugWarning($"collector jumped: {collector.CollectorJumped}");
+
+        Plugin.DebugFatal($"collector SlideStaminaMax: {collector.SlideStaminaMax}");
+        Plugin.DebugFatal($"collector SlideSpeed: {collector.SlideSpeed}");
+
+        if (collector.CanSlide)
+        {
+            if (self.animation != null && self.animation == Player.AnimationIndex.HangFromBeam)
+            {
+                collector.preventSlide = 15;
+            }
+            else if (collector.preventSlide > 0)
+            {
+                collector.preventSlide--;
+            }
+
+            if (!collector.isSliding)
+            {
+                speed = 2f;
+                LimitSpeed = true;
+                // if not sliding, limit the speed  to 2f
+                // if she IS sliding
+                collector.windSound.Volume = Mathf.Lerp(0f, 0.4f, collector.slideDuration / flightKickinDuration);
+
+                collector.slideDuration++;
+
+                self.AerobicIncrease(0.0001f);
+
+                self.gravity = Mathf.Lerp(normalGravity, flightGravity, collector.slideDuration / flightKickinDuration);
+
+                self.airFriction = Mathf.Lerp(normalAirFriction, flightAirFriction, collector.slideDuration / flightKickinDuration);
+
+                if (LimitSpeed)
+                {
+                    speed = Custom.LerpAndTick(speed, 10f, 0.001f, 0.3f);
+
+                    if (speed >= 10f)
+                    {
+                        LimitSpeed = false;
+                    }
+
+                    if (self.input != null &&
+                        self.input[0].x > 0)
+                    {
+                        self.bodyChunks[0].vel.x = self.bodyChunks[0].vel.x + speed;
+                        self.bodyChunks[1].vel.x = self.bodyChunks[1].vel.x - 1f;
+                    }
+                    else if (self.input != null &&
+                        self.input[0].x < 0)
+                    {
+                        self.bodyChunks[0].vel.x = self.bodyChunks[0].vel.x - speed;
+                        self.bodyChunks[1].vel.x = self.bodyChunks[1].vel.x + 1f;
+                    }
+
+                    if (self.room.gravity <= 0.5)
+                    {
+                        // this probably should not be here, as collector shouldnt be able to fly in 0g? should ask
+                        if (self.input != null &&
+                        self.input[0].y > 0)
+                        {
+                            self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y + speed;
+                            self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y - 1f;
+                        }
+                        else if (self.input != null &&
+                        self.input[0].y < 0)
+                        {
+                            self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y - speed;
+                            self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y + 1f;
+                        }
+
+                        try { collector.windSound.Update(); }
+                        catch (Exception e) { Plugin.DebugLog("Collector (windsound update) is being a little bitch: " + e); }
+                    }
+                }
+
+                if (!LimitSpeed)
+                {
+                    // if collector is not being rate limited
+                    speed = Custom.LerpAndTick(speed, 0f, 0.005f, 0.003f);
+
+                    if (speed == 0f)
+                    {
+                        LimitSpeed = true;
+                    }
+
+                    if (self.input[0].x > 0)
+                    {
+                        self.bodyChunks[0].vel.x = self.bodyChunks[0].vel.x + speed;
+                        self.bodyChunks[1].vel.x = self.bodyChunks[1].vel.x - 1f;
+                    }
+                    else if (self.input[0].x < 0)
+                    {
+                        self.bodyChunks[0].vel.x = self.bodyChunks[0].vel.x - speed;
+                        self.bodyChunks[1].vel.x = self.bodyChunks[1].vel.x + 1f;
+                    }
+
+                    if (self.room.gravity <= 0.5)
+                    {
+                        if (self.input[0].y > 0)
+                        {
+                            self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y + speed;
+                            self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y - 1f;
+                        }
+                        else if (self.input[0].y < 0)
+                        {
+                            self.bodyChunks[0].vel.y = self.bodyChunks[0].vel.y - speed;
+                            self.bodyChunks[1].vel.y = self.bodyChunks[1].vel.y + 1f;
+                        }
+                    }
+
+                    if (speed <= 1.2f)
+                    {
+                        collector.StopSliding();
+                    }
+
+                    if (!self.input[0].jmp || !collector.CanSustainSlide())
+                    {
+                        collector.StopSliding();
+                    }
+                }
+
+                collector.slideStaminaRecoveryCooldown = 40;
+                collector.SlideStamina--;
+            }
+            else
+            {
+                collector.windSound.Volume = Mathf.Lerp(1f, 0f, collector.timeSinceLastSlide / flightKickinDuration);
+
+                collector.timeSinceLastSlide++;
+
+                collector.windSound.Volume = 0f;
+
+                if (collector.slideStaminaRecoveryCooldown > 0)
+                {
+                    collector.slideStaminaRecoveryCooldown--;
+                }
+                else
+                {
+                    collector.SlideStamina = Mathf.Min(collector.SlideStamina + collector.SlideRecovery, collector.SlideStaminaMax);
+                }
+
+                if (self.wantToJump > 0 && collector.SlideStamina > collector.MinimumSlideStamina && collector.CanSustainSlide() && collector.CollectorJumped)
+                {
+                    collector.InitiateSlide();
+                }
+
+                self.airFriction = normalAirFriction;
+                self.gravity = normalGravity;
+
+                if (collector.preventGrabs > 0)
+                {
+                    collector.preventGrabs--;
+                }
+                collector.windSound.Update();
+            }
+        }
+
     }
 }

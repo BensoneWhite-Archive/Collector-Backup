@@ -32,7 +32,7 @@ public class StatsHooks
 
         // Turn this to true for even more extra debug logs. a frankly ridiculous amount of them
         //This can be changed as a press key and turn it on true, maybe pressing 2 numpads numbers?
-        collector.NeonWantsDebugLogsUwU = false;
+        collector.NeonWantsDebugLogsUwU = true;
     }
 
     private static void Player_Jump(On.Player.orig_Jump orig, Player self)
